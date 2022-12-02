@@ -1,6 +1,7 @@
+use std::{io::BufReader, thread, time::Duration};
+
 use clap::Parser;
 use rodio::Sink;
-use std::{io::BufReader, thread, time::Duration};
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -26,7 +27,7 @@ fn main() {
         if x == "kick" {
             instrument = x;
         } else {
-            threads.push(thread::spawn(move || {
+            threads.push(thread::spawn(|| {
                 let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
 
                 let sink = rodio::Sink::try_new(&handle).unwrap();
