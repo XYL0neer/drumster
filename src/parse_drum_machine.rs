@@ -1,5 +1,4 @@
 use std::collections::VecDeque;
-use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct DrumMachine {
@@ -23,6 +22,7 @@ enum Instrument {
     HiHat,
 }
 
+// TODO error handling not yet implemented, only valid csv will work
 pub fn parse_csv(csv_content: &String) -> DrumMachine {
     let mut lines = csv_content.lines().collect::<VecDeque<&str>>();
 
@@ -33,18 +33,19 @@ pub fn parse_csv(csv_content: &String) -> DrumMachine {
     let (bpm, config_line) = next_element(config_line);
     let (resolution, config_line) = next_element(config_line);
 
-    let instruments: Vec<Track> = Vec::new();
-
-    let tracks: Vec<Track> = config_line.split(';').map(|(inst)| {
-        let instrument = match inst {
-            "Kick" => Ok(Instrument::Kick),
-            "Snare" => Ok(Instrument::Snare),
-            "HiHat" => Ok(Instrument::HiHat),
-            _ => Err(())
-        };
-        let line = lines.pop_front().unwrap();
-        create_track(instrument.unwrap(), line)
-    }).collect();
+    let tracks: Vec<Track> = config_line
+        .split(';')
+        .map(|inst| {
+            let instrument = match inst {
+                "Kick" => Ok(Instrument::Kick),
+                "Snare" => Ok(Instrument::Snare),
+                "HiHat" => Ok(Instrument::HiHat),
+                _ => Err(()),
+            };
+            let line = lines.pop_front().unwrap();
+            create_track(instrument.unwrap(), line)
+        })
+        .collect();
 
     let drum_machine = DrumMachine {
         beats: beats.parse().unwrap(),
@@ -62,9 +63,9 @@ fn next_element(line: &str) -> (&str, &str) {
 }
 
 fn create_track(inst: Instrument, line: &str) -> Track {
-    let line: Vec<u32> = line.split(';').map(|x| x.parse::<u32>().unwrap()).collect();
+    let line = line.split(';').map(|x| x.parse::<u32>().unwrap()).collect();
     Track {
         instrument: inst,
-        triggers: line
+        triggers: line,
     }
 }
