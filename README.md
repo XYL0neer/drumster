@@ -58,9 +58,9 @@ The beat plays eighth on HiHat Snare on 2 and 4 and Kick on each hit.
 ```
 
 ### CSV Validation
-bpm - 0 < bpm <= 300
-beats - 0 < beats <= 255 (as its from type u8 but reasonable max value would be around 20)
-base - note value
-resolution - note value
-instrument - Kick, Snare, HiHat, more to come
-instrument-strokes - 0 <= strokes < resolution * (beats / base)
+- bpm - 0 < bpm <= 300
+- beats - 0 < beats <= 255 (as its from type u8 but reasonable max value would be around 20)
+- base - note value
+- resolution - note value
+- instrument - Kick, Snare, HiHat, more to come
+- instrument-strokes - 0 <= strokes < resolution * (beats / base)
