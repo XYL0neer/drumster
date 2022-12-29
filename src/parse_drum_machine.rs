@@ -1,29 +1,30 @@
 use std::collections::VecDeque;
+use std::string::ParseError;
 
 #[derive(Debug)]
 pub struct DrumMachine {
-    beats: u8,
-    base: u8,
-    bpm: u32,
-    resolution: u32,
-    tracks: Vec<Track>,
+    pub beats: u8,
+    pub base: u8,
+    pub bpm: u32,
+    pub resolution: u32,
+    pub tracks: Vec<Track>,
 }
 
 #[derive(Debug)]
 pub struct Track {
-    instrument: Instrument,
-    triggers: Vec<u32>,
+    pub instrument: Instrument,
+    pub triggers: Vec<u32>,
 }
 
 #[derive(Debug)]
-enum Instrument {
+pub enum Instrument {
     Kick,
     Snare,
     HiHat,
 }
 
 // TODO error handling not yet implemented, only valid csv will work
-pub fn parse_csv(csv_content: &String) -> DrumMachine {
+pub fn parse_csv(csv_content: &String) -> Result<DrumMachine, ParseError> {
     let mut lines = csv_content.lines().collect::<VecDeque<&str>>();
 
     let config_line = lines.pop_front().unwrap();
@@ -55,7 +56,7 @@ pub fn parse_csv(csv_content: &String) -> DrumMachine {
         tracks,
     };
 
-    drum_machine
+    Ok(drum_machine)
 }
 
 fn next_element(line: &str) -> (&str, &str) {
