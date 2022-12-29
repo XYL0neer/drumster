@@ -3,9 +3,9 @@ use std::string::ParseError;
 
 #[derive(Debug)]
 pub struct DrumMachine {
+    pub bpm: u32,
     pub beats: u8,
     pub base: u8,
-    pub bpm: u32,
     pub resolution: u32,
     pub tracks: Vec<Track>,
 }
@@ -29,9 +29,9 @@ pub fn parse_csv(csv_content: &String) -> Result<DrumMachine, ParseError> {
 
     let config_line = lines.pop_front().unwrap();
 
+    let (bpm, config_line) = next_element(config_line);
     let (beats, config_line) = next_element(config_line);
     let (base, config_line) = next_element(config_line);
-    let (bpm, config_line) = next_element(config_line);
     let (resolution, config_line) = next_element(config_line);
 
     let tracks: Vec<Track> = config_line
