@@ -1,9 +1,8 @@
-use crate::drum_player::play_drum_machine;
-use crate::parse_drum_machine::DrumMachine;
+use drum_machine::drum_player::play_drum_machine;
 use clap::Parser;
+use crate::drum_machine::parse_drum_machine;
 
-mod drum_player;
-mod parse_drum_machine;
+mod drum_machine;
 
 #[derive(Parser)]
 #[clap(author, version, about)]

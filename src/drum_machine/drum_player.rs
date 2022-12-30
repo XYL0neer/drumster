@@ -1,8 +1,8 @@
+use crate::drum_machine::model::{DrumMachine, Instrument};
+use rodio::Sink;
 use std::io::BufReader;
 use std::thread;
 use std::time::Duration;
-use rodio::Sink;
-use crate::parse_drum_machine::{DrumMachine, Instrument};
 
 pub fn play_drum_machine(drum_machine: DrumMachine) {
     let mut strokes: u32 = 0;
