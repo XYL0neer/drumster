@@ -12,16 +12,11 @@ struct CLI {
 
 fn main() {
     let cli = CLI::parse();
-
     let sample = cli.path.unwrap();
+    println!("Play drums from file: {:?}", sample);
 
-    println!("name: {:?}", sample);
-
-    let sample = std::fs::read_to_string(sample).expect("Should have been able to read the file");
-
-    let drum_machine = parse_drum_machine::parse_csv(&sample).unwrap();
-
+    let drum_machine = parse_drum_machine::parse_csv(&sample);
     dbg!(&drum_machine);
 
-    play_drum_machine(drum_machine);
+    // play_drum_machine(drum_machine);
 }
