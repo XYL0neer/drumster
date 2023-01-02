@@ -6,7 +6,8 @@ CLI Drum Machine
 
 - [x] Parse CSV
 - [x] Play Beat
-- [ ] csv parsing more resilient with warnings which fields are malformed (missing fields, wrong type)
+- [x] csv parsing more resilient with warnings which fields are malformed (missing fields, wrong type)
+- [ ] improve performance with async instead of threads
 - [ ] Awesome visualization of playing beat
 - [ ] Edit drum machine in CLI
 - [ ] Export to sound file

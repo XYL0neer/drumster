@@ -14,18 +14,17 @@ pub fn play_drum_machine(drum_machine: DrumMachine) {
         stroke_duration.as_millis()
     );
 
-    let mut threads = vec![];
     loop {
         println!("Hit {}", strokes);
         for track in &drum_machine.tracks {
             if track.triggers.contains(&strokes) {
                 let sound_file = sound_file_for_instrument(&track.instrument);
-                threads.push(thread::spawn(move || {
+                thread::spawn(move || {
                     let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
                     let sink = Sink::try_new(&handle).unwrap();
                     play_sound(&sink, &sound_file);
                     sink.sleep_until_end();
-                }));
+                });
             }
         }
         strokes += 1;
