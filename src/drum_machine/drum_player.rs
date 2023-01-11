@@ -18,13 +18,8 @@ pub fn play_drum_machine(drum_machine: DrumMachine) {
         println!("Hit {}", strokes);
         for track in &drum_machine.tracks {
             if track.triggers.contains(&strokes) {
-                let sound_file = sound_file_for_instrument(&track.instrument);
-                thread::spawn(move || {
-                    let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
-                    let sink = Sink::try_new(&handle).unwrap();
-                    play_sound(&sink, &sound_file);
-                    sink.sleep_until_end();
-                });
+                let sound_file = format!("sounds/{}.wav", track.instrument.to_str());
+                thread::spawn(move || { play_sound(&sound_file); });
             }
         }
         strokes += 1;
@@ -35,20 +30,12 @@ pub fn play_drum_machine(drum_machine: DrumMachine) {
     }
 }
 
-fn play_sound(sink: &Sink, sound_file: &str) {
+fn play_sound(sound_file: &str) {
+    let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
+    let sink = Sink::try_new(&handle).unwrap();
     let kick = std::fs::File::open(sound_file).unwrap();
     sink.append(rodio::Decoder::new(BufReader::new(kick)).unwrap());
-}
-
-fn sound_file_for_instrument(instrument: &Instrument) -> String {
-    let inst_str = match instrument {
-        Instrument::Kick => "Kick",
-        Instrument::HiHat => "HiHat",
-        Instrument::Snare => "Snare",
-    };
-
-    let sound_file = format!("sounds/{}.wav", inst_str);
-    sound_file
+    sink.sleep_until_end();
 }
 
 fn calculate_duration_per_hit(drum_machine: &DrumMachine) -> (u32, Duration) {

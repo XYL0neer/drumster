@@ -19,3 +19,13 @@ pub enum Instrument {
     Snare,
     HiHat,
 }
+
+impl Instrument {
+    pub fn to_str(&self) -> &'static str {
+        match self {
+            Instrument::Kick => "Kick",
+            Instrument::Snare => "Snare",
+            Instrument::HiHat => "HiHat",
+        }
+    }
+}
