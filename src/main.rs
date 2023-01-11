@@ -1,6 +1,7 @@
+use clap::Parser;
+
 use crate::drum_machine::drum_player::play_drum_machine;
 use crate::drum_machine::parse_drum_machine;
-use clap::Parser;
 
 mod drum_machine;
 

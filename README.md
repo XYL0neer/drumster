@@ -7,11 +7,11 @@ CLI Drum Machine
 - [x] Parse CSV
 - [x] Play Beat
 - [x] csv parsing more resilient with warnings which fields are malformed (missing fields, wrong type)
-- [ ] improve performance with async instead of threads
-- [ ] Awesome visualization of playing beat
+- [ ] Awesome visualization of playing beat -> checkout [crossterm](https://github.com/crossterm-rs/crossterm)
 - [ ] Edit drum machine in CLI
 - [ ] Export to sound file
 - [ ] allow to play triplets | can be highly difficult
+- [ ] big ui with [tui](https://github.com/fdehau/tui-rs)
 
 ## CSV
 

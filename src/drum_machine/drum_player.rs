@@ -33,8 +33,8 @@ pub fn play_drum_machine(drum_machine: DrumMachine) {
 fn play_sound(sound_file: &str) {
     let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&handle).unwrap();
-    let kick = std::fs::File::open(sound_file).unwrap();
-    sink.append(rodio::Decoder::new(BufReader::new(kick)).unwrap());
+    let file = std::fs::File::open(sound_file).unwrap();
+    sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
     sink.sleep_until_end();
 }
 
