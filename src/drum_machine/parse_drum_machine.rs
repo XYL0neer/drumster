@@ -1,5 +1,4 @@
-use std::collections::VecDeque;
-
+use std::collections::vec_deque::VecDeque;
 use crate::drum_machine::model::{DrumMachine, Instrument, Track};
 
 pub fn parse_csv(file_name: &str) -> DrumMachine {
@@ -61,7 +60,7 @@ fn next_element(line: &str, delimiter: Option<char>) -> Result<(&str, &str), ()>
 fn create_track(instrument: Instrument, line: &str) -> Track {
     let mut triggers: Vec<u32> = Vec::new();
     line.split(';').for_each(|x| {
-        if let Ok(x) = x.parse::<u32>() {
+        if let Ok(x) = x.parse() {
             triggers.push(x);
         }
     });

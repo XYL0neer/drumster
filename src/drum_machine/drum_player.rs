@@ -1,10 +1,11 @@
 use crate::drum_machine::model::{DrumMachine, Instrument};
 use rodio::Sink;
 use std::io::BufReader;
+use std::sync::mpsc::Sender;
 use std::thread;
 use std::time::Duration;
 
-pub fn play_drum_machine(drum_machine: DrumMachine) {
+pub fn play_drum_machine(drum_machine: DrumMachine, sender: Sender<u32>) {
     let mut strokes: u32 = 0;
     let (strokes_per_tact, stroke_duration) = calculate_duration_per_hit(&drum_machine);
 
@@ -15,7 +16,7 @@ pub fn play_drum_machine(drum_machine: DrumMachine) {
     );
 
     loop {
-        println!("Hit {}", strokes);
+        sender.send(strokes).unwrap();
         for track in &drum_machine.tracks {
             if track.triggers.contains(&strokes) {
                 let sound_file = format!("sounds/{}.wav", track.instrument.to_str());

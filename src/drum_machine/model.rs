@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct DrumMachine {
     pub bpm: u32,
     pub beats: u8,
@@ -7,13 +7,13 @@ pub struct DrumMachine {
     pub tracks: Vec<Track>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Track {
     pub instrument: Instrument,
     pub triggers: Vec<u32>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Instrument {
     Kick,
     Snare,
