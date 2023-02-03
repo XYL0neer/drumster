@@ -20,7 +20,7 @@ pub fn play_drum_machine(drum_machine: DrumMachine, sender: Sender<u32>) {
         for track in &drum_machine.tracks {
             if track.triggers.contains(&strokes) {
                 let sound_file = format!("sounds/{}.wav", track.instrument.to_str());
-                thread::spawn(move || { play_sound(&sound_file); });
+                thread::spawn(move || play_sound(&sound_file));
             }
         }
         strokes += 1;

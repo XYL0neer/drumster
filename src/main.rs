@@ -1,16 +1,20 @@
-use std::io::{stdin, stdout, Write};
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::io::{stdout, Stdout};
+use std::sync::mpsc::{channel, Receiver};
 use std::thread;
+use std::time::Duration;
 
 use clap::Parser;
-use crossterm::{cursor, execute, queue, terminal};
-use crossterm::style::Print;
+use crossterm::{execute, Result, terminal};
+use crossterm::event::{Event, KeyCode, KeyEvent, poll, read};
+use crossterm::terminal::{SetSize, size};
 
 use crate::drum_machine::drum_player::play_drum_machine;
 use crate::drum_machine::model::DrumMachine;
 use crate::drum_machine::parse_drum_machine;
+use crate::ui::render_drum_machine;
 
 mod drum_machine;
+mod ui;
 
 #[derive(Parser)]
 #[clap(author, version, about)]
@@ -18,50 +22,51 @@ struct CLI {
     path: Option<String>,
 }
 
+
 fn main() {
+    let mut stdout = stdout();
     let cli = CLI::parse();
     let sample = cli.path.unwrap();
     println!("Play drums from file: {:?}", sample);
 
     let drum_machine = parse_drum_machine::parse_csv(&sample);
-    let mut current_position = 0;
-    render_drum_machine(&drum_machine, current_position);
-
+    let current_position = 0;
+    render_drum_machine(&mut stdout, &drum_machine, current_position);
 
     let (sender, receiver) = channel();
 
     let copied = drum_machine.clone();
-    let player_thread = thread::spawn(move || { play_drum_machine(copied, sender) });
+    thread::spawn(move || play_drum_machine(copied, sender));
 
-    loop {
-        current_position = receiver.recv().unwrap();
-        render_drum_machine(&drum_machine, current_position);
-    }
+    render_until_finished(&mut stdout, receiver, &drum_machine).unwrap();
 }
 
-fn render_drum_machine(drum_machine: &DrumMachine, current_position: u32) {
-    let mut stdout = stdout();
-    execute!(stdout, terminal::Clear(terminal::ClearType::All)).unwrap();
-    let stroke_per_beat = drum_machine.resolution as f64 / drum_machine.base as f64;
-    let stroke_per_tact = stroke_per_beat as u32 * drum_machine.beats as u32;
-
-    for track in drum_machine.tracks.iter() {
-        let instrument_title = format!("{: <8}", track.instrument.to_str());
-        let mut tact = String::new();
-        for curr_stroke in 0..stroke_per_tact {
-            if track.triggers.contains(&curr_stroke) {
-                tact += "X";
-            } else {
-                tact += "-";
-            }
-            if curr_stroke == current_position {
-                tact += "⎥";
-            } else {
-                tact += " ";
+fn render_until_finished(stdout: &mut Stdout, receiver: Receiver<u32>, drum_machine: &DrumMachine) -> Result<()> {
+    let (cols, rows) = size()?;
+    terminal::enable_raw_mode()?;
+    execute!(stdout, SetSize(cols, rows))?;
+    loop {
+        let received = receiver.recv().unwrap();
+        render_drum_machine(stdout, drum_machine, received);
+        if poll(Duration::from_millis(50))? {
+            match read_char()? {
+                'q' => break,
+                _ => {}
             }
         }
-
-        queue!(stdout, Print(format!("{} | {}|\n", instrument_title, tact))).unwrap();
     }
-    stdout.flush().unwrap();
+
+    terminal::disable_raw_mode()
+}
+
+pub fn read_char() -> Result<char> {
+    loop {
+        if let Ok(Event::Key(KeyEvent {
+                                 code: KeyCode::Char(c),
+                                 ..
+                             })) = read()
+        {
+            return Ok(c);
+        }
+    }
 }

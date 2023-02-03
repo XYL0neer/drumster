@@ -1,5 +1,5 @@
-use std::collections::vec_deque::VecDeque;
 use crate::drum_machine::model::{DrumMachine, Instrument, Track};
+use std::collections::vec_deque::VecDeque;
 
 pub fn parse_csv(file_name: &str) -> DrumMachine {
     let csv_content =
@@ -33,7 +33,10 @@ pub fn parse_csv(file_name: &str) -> DrumMachine {
         .collect();
 
     if !lines.is_empty() {
-        eprintln!("There are {} more programming lines than instruments!", lines.len());
+        eprintln!(
+            "There are {} more programming lines than instruments!",
+            lines.len()
+        );
     }
 
     let drum_machine = DrumMachine {
