@@ -1,7 +1,7 @@
-use std::io::{stdout, Stdout, Write};
+use std::io::{Stdout, Write};
 
-use crossterm::{execute, queue, terminal};
 use crossterm::style::Print;
+use crossterm::{execute, queue, terminal};
 
 use crate::drum_machine::model::DrumMachine;
 

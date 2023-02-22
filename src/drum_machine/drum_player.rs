@@ -1,4 +1,4 @@
-use crate::drum_machine::model::{DrumMachine, Instrument};
+use crate::drum_machine::model::DrumMachine;
 use rodio::Sink;
 use std::io::BufReader;
 use std::sync::mpsc::Sender;
