@@ -1,25 +1,8 @@
 use std::io::{Error};
+use crate::drum_machine::trigger_strategy::TriggerPattern;
 
 use super::model::{DrumMachine, Instrument, Track};
 
-pub trait TriggerPattern {
-    fn to_triggers(&self, beats: u8, base: u8, resolution: u32) -> Vec<u32>;
-}
-
-// OffBeat, // Hit between to beats
-  //  OnBeat, // Hit on every beat
-   // BackBeat, // Hit on 2 and 4
-    //Shuffle, // Hit on Beat and 2 resolution lower before the beat
-
-struct OnBeat;
-impl TriggerPattern for OnBeat {
-    fn to_triggers(&self, beats: u8, base: u8, resolution: u32) -> Vec<u32> {
-        let stroke_per_beat = resolution as f64 / base as f64;
-        println!("{} strokes per beat", stroke_per_beat);
-        let stroke_per_tact = stroke_per_beat as u32 * beats as u32;
-        vec![]
-    }
-}
 
 #[derive(Default)]
 pub struct DrumMachineBuilder {
