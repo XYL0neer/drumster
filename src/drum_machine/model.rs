@@ -10,6 +10,7 @@ pub struct DrumMachine {
 #[derive(Debug, Clone)]
 pub struct Track {
     pub instrument: Instrument,
+    pub volume: f32,
     pub triggers: Vec<u32>,
 }
 

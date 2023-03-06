@@ -1,7 +1,7 @@
 use crate::drum_machine::model::{DrumMachine, Instrument, Track};
-use std::collections::vec_deque::VecDeque;
+use std::{borrow::Borrow, collections::vec_deque::VecDeque};
 
-pub fn parse_csv(file_name: &str) -> DrumMachine {
+pub fn parse_csv(file_name: String) -> DrumMachine {
     let csv_content =
         std::fs::read_to_string(file_name).expect("Should have been able to read the file");
 
@@ -15,29 +15,40 @@ pub fn parse_csv(file_name: &str) -> DrumMachine {
         .expect("Elements after beats missing: base, resolution, instruments");
     let (base, config_line) = next_element(config_line, None)
         .expect("Elements after base missing: resolution, instruments");
-    let (resolution, config_line) =
-        next_element(config_line, None).expect("Elements after resolution missing: instruments");
+    let resolution = config_line;
 
-    let tracks: Vec<Track> = config_line
-        .split(';')
-        .map(|inst| {
-            let instrument = match inst {
-                "Kick" => Ok(Instrument::Kick),
-                "Snare" => Ok(Instrument::Snare),
-                "HiHat" => Ok(Instrument::HiHat),
-                _ => Err(()),
-            };
-            let line = lines.pop_front().unwrap_or_default();
-            create_track(instrument.unwrap(), line)
+    // let tracks: Vec<Track> = config_line
+    //     .split(';')
+    //     .map(|inst| {
+    // let instrument = match inst {
+    //     "Kick" => Ok(Instrument::Kick),
+    //     "Snare" => Ok(Instrument::Snare),
+    //     "HiHat" => Ok(Instrument::HiHat),
+    //     _ => Err(()),
+    //         };
+    //         let line = lines.pop_front().unwrap_or_default();
+    //         create_track(instrument.unwrap(), line)
+    //     })
+    //     .collect();
+    let tracks = lines
+        .iter()
+        .map(|line| {
+            let track_line: Vec<&str> = line.split(";").collect();
+            Track {
+                instrument: match track_line[0] {
+                    "Kick" => Instrument::Kick,
+                    "Snare" => Instrument::Snare,
+                    "HiHat" => Instrument::HiHat,
+                    _ => panic!("Oh nooo"),
+                },
+                triggers: track_line[1]
+                    .split(",")
+                    .map(|x| x.parse::<u32>().unwrap())
+                    .collect(),
+                volume: track_line.get(2).unwrap().parse().unwrap_or(1.0),
+            }
         })
         .collect();
-
-    if !lines.is_empty() {
-        eprintln!(
-            "There are {} more programming lines than instruments!",
-            lines.len()
-        );
-    }
 
     let drum_machine = DrumMachine {
         beats: beats.parse().unwrap(),
@@ -57,18 +68,5 @@ fn next_element(line: &str, delimiter: Option<char>) -> Result<(&str, &str), ()>
     match line.split_once(delimiter.unwrap_or(';')) {
         None => Err(()),
         Some((left, right)) => Ok((left, right)),
-    }
-}
-
-fn create_track(instrument: Instrument, line: &str) -> Track {
-    let mut triggers: Vec<u32> = Vec::new();
-    line.split(';').for_each(|x| {
-        if let Ok(x) = x.parse() {
-            triggers.push(x);
-        }
-    });
-    Track {
-        instrument,
-        triggers,
     }
 }

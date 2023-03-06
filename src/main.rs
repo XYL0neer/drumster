@@ -4,9 +4,9 @@ use std::thread;
 use std::time::Duration;
 
 use clap::Parser;
-use crossterm::{execute, Result, terminal};
-use crossterm::event::{Event, KeyCode, KeyEvent, poll, read};
-use crossterm::terminal::{SetSize, size};
+use crossterm::event::{poll, read, Event, KeyCode, KeyEvent};
+use crossterm::terminal::{size, SetSize};
+use crossterm::{execute, terminal, Result};
 
 use crate::drum_machine::drum_player::play_drum_machine;
 use crate::drum_machine::model::DrumMachine;
@@ -22,14 +22,13 @@ struct CLI {
     path: Option<String>,
 }
 
-
 fn main() {
     let mut stdout = stdout();
     let cli = CLI::parse();
     let sample = cli.path.unwrap();
     println!("Play drums from file: {:?}", sample);
 
-    let drum_machine = parse_drum_machine::parse_csv(&sample);
+    let drum_machine = parse_drum_machine::parse_csv(sample);
     let current_position = 0;
     render_drum_machine(&mut stdout, &drum_machine, current_position);
 
@@ -41,7 +40,11 @@ fn main() {
     render_until_finished(&mut stdout, receiver, &drum_machine).unwrap();
 }
 
-fn render_until_finished(stdout: &mut Stdout, receiver: Receiver<u32>, drum_machine: &DrumMachine) -> Result<()> {
+fn render_until_finished(
+    stdout: &mut Stdout,
+    receiver: Receiver<u32>,
+    drum_machine: &DrumMachine,
+) -> Result<()> {
     let (cols, rows) = size()?;
     terminal::enable_raw_mode()?;
     execute!(stdout, SetSize(cols, rows))?;
@@ -62,9 +65,9 @@ fn render_until_finished(stdout: &mut Stdout, receiver: Receiver<u32>, drum_mach
 pub fn read_char() -> Result<char> {
     loop {
         if let Ok(Event::Key(KeyEvent {
-                                 code: KeyCode::Char(c),
-                                 ..
-                             })) = read()
+            code: KeyCode::Char(c),
+            ..
+        })) = read()
         {
             return Ok(c);
         }

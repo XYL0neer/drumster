@@ -19,21 +19,23 @@ pub fn play_drum_machine(drum_machine: DrumMachine, sender: Sender<u32>) {
         sender.send(strokes).unwrap();
         for track in &drum_machine.tracks {
             if track.triggers.contains(&strokes) {
+                let vol = track.volume;
                 let sound_file = format!("sounds/{}.wav", track.instrument.to_str());
-                thread::spawn(move || play_sound(&sound_file));
+                thread::spawn(move || play_sound(&sound_file, vol));
             }
         }
+        thread::sleep(stroke_duration);
         strokes += 1;
         if strokes >= strokes_per_tact {
             strokes = 0;
         }
-        thread::sleep(stroke_duration);
     }
 }
 
-fn play_sound(sound_file: &str) {
+fn play_sound(sound_file: &str, volume: f32) {
     let (_stream, handle) = rodio::OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&handle).unwrap();
+    sink.set_volume(volume);
     let file = std::fs::File::open(sound_file).unwrap();
     sink.append(rodio::Decoder::new(BufReader::new(file)).unwrap());
     sink.sleep_until_end();

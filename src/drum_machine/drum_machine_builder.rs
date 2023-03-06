@@ -71,6 +71,7 @@ impl DrumMachineBuilder {
         let triggers = pattern.to_triggers(stroke_per_tact, self.beats.unwrap());
         self.tracks.push(Track {
             instrument: instrument,
+            volume: 1.0,
             triggers: triggers,
         });
         Ok(self)
