@@ -1,5 +1,5 @@
 use crate::drum_machine::model::{DrumMachine, Instrument, Track};
-use std::{borrow::Borrow, collections::vec_deque::VecDeque};
+use std::collections::vec_deque::VecDeque;
 
 pub fn parse_csv(file_name: String) -> DrumMachine {
     let csv_content =
