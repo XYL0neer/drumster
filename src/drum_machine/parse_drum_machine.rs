@@ -17,19 +17,6 @@ pub fn parse_csv(file_name: String) -> DrumMachine {
         .expect("Elements after base missing: resolution, instruments");
     let resolution = config_line;
 
-    // let tracks: Vec<Track> = config_line
-    //     .split(';')
-    //     .map(|inst| {
-    // let instrument = match inst {
-    //     "Kick" => Ok(Instrument::Kick),
-    //     "Snare" => Ok(Instrument::Snare),
-    //     "HiHat" => Ok(Instrument::HiHat),
-    //     _ => Err(()),
-    //         };
-    //         let line = lines.pop_front().unwrap_or_default();
-    //         create_track(instrument.unwrap(), line)
-    //     })
-    //     .collect();
     let tracks = lines
         .iter()
         .map(|line| {
